@@ -1,4 +1,4 @@
-package com.github.dhirajraut.aws.daos;
+package com.github.dhirajraut.aws.lambdas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,13 @@ import java.util.List;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.lambda.runtime.events.SNSEvent;
-import com.amazonaws.services.lambda.runtime.events.SNSEvent.SNSRecord;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent;
+import com.amazonaws.services.lambda.runtime.events.SQSEvent.SQSMessage;
 
-public class SNSHandler implements RequestHandler<SNSEvent, List<String>> {
+public class SQSHandler implements RequestHandler<SQSEvent, List<String>> {
 
     @Override
-    public List<String> handleRequest(SNSEvent input, Context context) {
+    public List<String> handleRequest(SQSEvent input, Context context) {
         
         List<String> returnObject = new ArrayList<String>();
 
@@ -20,16 +20,16 @@ public class SNSHandler implements RequestHandler<SNSEvent, List<String>> {
         logger.log("Input: SNSEvent = " + input);
 
         if (input != null) {
-            List<SNSRecord> records = input.getRecords();
+            List<SQSMessage> records = input.getRecords();
             logger.log("Received records = " + records);
 
             if (records != null) {
                 logger.log("Received message count = " + records.size());
 
-                for (SNSRecord record : records) {
-                    logger.log("SNSRecord = " + record);
-                    if (record != null && record.getSNS() != null) {
-                        returnObject.add(record.getSNS().getMessage());
+                for (SQSMessage record : records) {
+                    logger.log("SQSMessage = " + record);
+                    if (record != null && record.getBody() != null) {
+                        returnObject.add(record.getBody());
                     }
                 }
             }
